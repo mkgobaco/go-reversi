@@ -91,9 +91,9 @@ func TestIsPossibleMove_returnsFalse_forNonPossibleMoves(t *testing.T) {
 
 func TestAttemptSomeMoves(t *testing.T) {
 	handler := TestResultHandler{}
-	brain := core.NewGameBrain(&handler)
+	brain := core.NewGameBrain()
 
-	brain.Initialize(&handler)
+	// brain.Initialize(&handler)
 
 	moveList := handler.result.Moves()
 	move := core.Move{Coordinate: moveList[0], Side: handler.result.NextPlayer()}

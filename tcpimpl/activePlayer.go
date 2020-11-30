@@ -31,11 +31,11 @@ func (player *ActivePlayer) listenForPlayerInput() {
 		for {
 			offset, err := player.connection.Read(data)
 			if err != nil {
-				fmt.Errorf("Error reading data %s", err.Error())
+				fmt.Errorf("Error reading data %s\n", err.Error())
 			}
 
 			if offset < 1 {
-				fmt.Errorf("Error reading data %s", "connection may be closed")
+				fmt.Errorf("Error reading data %s", "connection may be closed\n")
 				break
 			}
 

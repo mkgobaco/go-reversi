@@ -36,23 +36,31 @@ type UninitializedGameCommandPolicy struct {
 	eventConsumer EventConsumer
 }
 
-func (uninitializedGameCommandPolicy UninitializedGameCommandPolicy) processCommand(command Command, rejectHandler CommandRejectHandler) {
+func (policy UninitializedGameCommandPolicy) processCommand(command Command, rejectHandler CommandRejectHandler) {
 	if command.commandType != INITIALIZE {
 		rejectHandler.InvalidCommand(command)
 	}
 
-	uninitializedGameCommandPolicy.eventConsumer.SendEvent(NewInitializedEvent())
+	policy.eventConsumer.SendEvent(NewInitializedEvent())
+}
+
+type InProgressCommandPolicy struct {
+	eventConsumer EventConsumer
+}
+
+func (policy InProgressCommandPolicy) processCommand(command Command, rejectHandler CommandRejectHandler) {
+	if command.commandType == INITIALIZE {
+		rejectHandler.InvalidCommand(command)
+	}
 }
 
 func (commandHandler *CommandHandler) AttemptCommand(command Command, rejectHandler CommandRejectHandler) {
 	commandHandler.commandPolicy.processCommand(command, rejectHandler)
 }
 func (commandHandler *CommandHandler) StateUpdated(gameState GameState) {
-	// commandHandler.commandPolicy = NewInProgressCommandPolicy(
-	// 	gameState.activePlayer,
-	// 	gameState.availableMoves,
-	// )
-
+	commandHandler.commandPolicy = InProgressCommandPolicy{
+		eventConsumer: commandHandler.eventConsumer,
+	}
 }
 
 func NewCommandHandler(eventConsumer EventConsumer, notifier StateUpdateSource) CommandHandler {
